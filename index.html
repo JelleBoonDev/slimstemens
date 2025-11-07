@@ -5,20 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <title>Slimste Mens Timer</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0c0f12"/>
+  <link rel="apple-touch-icon" href="icon-192.png"/>
   <style>
     :root{
       --bg: #0c0f12;
       --panel: #151a21;
       --panel-edge: #0b0e12;
       --led: #ff2a2a;
-      --led-dim: #7a1a1a;
       --text: #e7eef7;
     }
     * { box-sizing: border-box; }
     body{
       margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       background: radial-gradient(1200px 800px at 50% -10%, #1a2230 0%, var(--bg) 55%);
-      display: grid; place-items: center; height: 100vh; color: var(--text);
+      display: grid; place-items: center; min-height: 100vh; color: var(--text);
     }
     .shell{
       width: min(560px, 94vw); border-radius: 20px; padding: 18px;
@@ -66,15 +68,15 @@
     const d=document;const elD=d.getElementById('display');const elStart=d.getElementById('startStop');const elP=d.getElementById('plus20');const elM=d.getElementById('minus20');
     let start=60,rem=start,run=false,raf,last=0;let audioCtx;
     function beep(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain(),now=audioCtx.currentTime;o.type='square';o.frequency.value=880;g.gain.setValueAtTime(0.001,now);g.gain.exponentialRampToValueAtTime(0.2,now+.02);g.gain.exponentialRampToValueAtTime(0.001,now+.18);o.connect(g).connect(audioCtx.destination);o.start(now);o.stop(now+.18);if(navigator.vibrate)navigator.vibrate(120);}catch(e){}}
-    function render(){elD.textContent=fmt(rem);elD.classList.toggle('dim',!run);elStart.textContent=run?'Stop':'Start';elStart.classList.toggle('active',run);}
+    function render(){elD.textContent=fmt(rem);elStart.textContent=run?'Stop':'Start';elStart.classList.toggle('active',run);}
     function tick(ts){if(!run)return;if(!last)last=ts;const dlt=(ts-last)/1000;last=ts;rem=Math.max(0,rem-dlt);if(rem===0){stop();render();beep();return;}render();raf=requestAnimationFrame(tick);}
     function startFn(){if(run)return;if(rem<=0)rem=start;run=true;last=0;render();raf=requestAnimationFrame(tick);}
     function stop(){run=false;last=0;if(raf)cancelAnimationFrame(raf);raf=null;render();}
-    function add(n,el){rem=clamp(rem+n,0,99*60+59);if(!run)render();flash(el);}
     function flash(el){el.classList.add('active');setTimeout(()=>el.classList.remove('active'),200);}
+    function add(n,el){rem=clamp(rem+n,0,99*60+59);if(!run)render();if(el)flash(el);}
     elStart.onclick=()=>run?stop():startFn();elP.onclick=()=>add(20,elP);elM.onclick=()=>add(-20,elM);
     window.onkeydown=e=>{if(e.repeat)return;if(e.key===' '){e.preventDefault();run?stop():startFn();}if(e.key==='+'||e.key==='='){add(20,elP);}if(e.key==='-'||e.key==='_'){add(-20,elM);}};
-    render();
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(()=>{}); }); }
   </script>
 </body>
 </html>
