@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>Slimste Mens Timer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #0c0f12;
+      --panel: #151a21;
+      --panel-edge: #0b0e12;
+      --led: #ff2a2a;
+      --led-dim: #7a1a1a;
+      --text: #e7eef7;
+    }
+    * { box-sizing: border-box; }
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 50% -10%, #1a2230 0%, var(--bg) 55%);
+      display: grid; place-items: center; height: 100vh; color: var(--text);
+    }
+    .shell{
+      width: min(560px, 94vw); border-radius: 20px; padding: 18px;
+      background: linear-gradient(180deg, var(--panel) 0%, #0f141a 100%);
+      box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
+      border: 1px solid var(--panel-edge);
+    }
+    .display{
+      font-family: "Orbitron", monospace;
+      font-size: clamp(56px, 16vw, 120px);
+      text-align: center; color: var(--led);
+      background: #050607; border-radius: 12px; padding: 18px 20px;
+      text-shadow: 0 0 8px rgba(255,42,42,.6), 0 0 22px rgba(255,42,42,.35);
+      box-shadow: inset 0 0 20px rgba(255,42,42,.08), 0 10px 30px rgba(0,0,0,.4);
+    }
+    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+    button {
+      border: none; border-radius: 14px; padding: 14px 16px;
+      font-size: clamp(16px, 4vw, 18px); color: #fff;
+      box-shadow: 0 6px 16px rgba(0,0,0,.35);
+      transition: transform .04s ease, filter .15s ease, box-shadow .25s ease;
+    }
+    button:active { transform: translateY(1px); }
+    #minus20 { background: linear-gradient(180deg, #5a1d1d, #2b0e0e); }
+    #minus20.active { box-shadow: 0 0 18px rgba(255, 50, 50, 0.4), 0 0 32px rgba(255, 50, 50, 0.2); filter: brightness(1.2); }
+    #startStop { background: linear-gradient(180deg, #1f2733, #111820); }
+    #startStop.active { box-shadow: 0 0 18px rgba(255,255,255,0.15), 0 0 32px rgba(255,255,255,0.08); filter: brightness(1.15); }
+    #plus20 { background: linear-gradient(180deg, #1e4130, #12261b); }
+    #plus20.active { box-shadow: 0 0 18px rgba(100,255,100,0.35), 0 0 32px rgba(100,255,100,0.15); filter: brightness(1.2); }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div id="display" class="display">01:00</div>
+    <div class="controls">
+      <button id="minus20">-20 s</button>
+      <button id="startStop">Start</button>
+      <button id="plus20">+20 s</button>
+    </div>
+  </main>
+
+  <script>
+    function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
+    function fmt(s){s=Math.max(0,Math.round(s));const m=Math.floor(s/60).toString().padStart(2,'0');const sec=(s%60).toString().padStart(2,'0');return `${m}:${sec}`;}
+    const d=document;const elD=d.getElementById('display');const elStart=d.getElementById('startStop');const elP=d.getElementById('plus20');const elM=d.getElementById('minus20');
+    let start=60,rem=start,run=false,raf,last=0;let audioCtx;
+    function beep(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain(),now=audioCtx.currentTime;o.type='square';o.frequency.value=880;g.gain.setValueAtTime(0.001,now);g.gain.exponentialRampToValueAtTime(0.2,now+.02);g.gain.exponentialRampToValueAtTime(0.001,now+.18);o.connect(g).connect(audioCtx.destination);o.start(now);o.stop(now+.18);if(navigator.vibrate)navigator.vibrate(120);}catch(e){}}
+    function render(){elD.textContent=fmt(rem);elD.classList.toggle('dim',!run);elStart.textContent=run?'Stop':'Start';elStart.classList.toggle('active',run);}
+    function tick(ts){if(!run)return;if(!last)last=ts;const dlt=(ts-last)/1000;last=ts;rem=Math.max(0,rem-dlt);if(rem===0){stop();render();beep();return;}render();raf=requestAnimationFrame(tick);}
+    function startFn(){if(run)return;if(rem<=0)rem=start;run=true;last=0;render();raf=requestAnimationFrame(tick);}
+    function stop(){run=false;last=0;if(raf)cancelAnimationFrame(raf);raf=null;render();}
+    function add(n,el){rem=clamp(rem+n,0,99*60+59);if(!run)render();flash(el);}
+    function flash(el){el.classList.add('active');setTimeout(()=>el.classList.remove('active'),200);}
+    elStart.onclick=()=>run?stop():startFn();elP.onclick=()=>add(20,elP);elM.onclick=()=>add(-20,elM);
+    window.onkeydown=e=>{if(e.repeat)return;if(e.key===' '){e.preventDefault();run?stop():startFn();}if(e.key==='+'||e.key==='='){add(20,elP);}if(e.key==='-'||e.key==='_'){add(-20,elM);}};
+    render();
+  </script>
+</body>
+</html>
