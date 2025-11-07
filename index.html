@@ -5,28 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <title>Slimste Mens Timer</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="manifest" href="manifest.json" />
+  <link rel="manifest" href="manifest.json?v=3" />
   <meta name="theme-color" content="#0c0f12"/>
-  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=3"/>
   <style>
     :root{
-      --bg: #0c0f12;
-      --panel: #151a21;
-      --panel-edge: #0b0e12;
-      --led: #ff2a2a;
-      --text: #e7eef7;
+      --led:#ff2a2a; --text:#e7eef7;
     }
-    * { box-sizing: border-box; }
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
     body{
       margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      background: radial-gradient(1200px 800px at 50% -10%, #1a2230 0%, var(--bg) 55%);
-      display: grid; place-items: center; min-height: 100vh; color: var(--text);
+      color: var(--text);
+      display:grid; place-items:center; min-height:100vh;
+      background:#0c0f12;
+    }
+    /* Background layer with dark overlay */
+    .bg{
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        linear-gradient(rgba(0,0,0,.46), rgba(0,0,0,.46)),
+        url('background.jpg') center center / cover no-repeat;
+      will-change: transform;
     }
     .shell{
+      position: relative; z-index: 1;
       width: min(560px, 94vw); border-radius: 20px; padding: 18px;
-      background: linear-gradient(180deg, var(--panel) 0%, #0f141a 100%);
+      background: rgba(15,20,26,.78);
+      -webkit-backdrop-filter: blur(2px);
+      backdrop-filter: blur(2px);
       box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
-      border: 1px solid var(--panel-edge);
+      border: 1px solid rgba(255,255,255,.06);
     }
     .display{
       font-family: "Orbitron", monospace;
@@ -36,24 +45,25 @@
       text-shadow: 0 0 8px rgba(255,42,42,.6), 0 0 22px rgba(255,42,42,.35);
       box-shadow: inset 0 0 20px rgba(255,42,42,.08), 0 10px 30px rgba(0,0,0,.4);
     }
-    .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
-    button {
-      border: none; border-radius: 14px; padding: 14px 16px;
-      font-size: clamp(16px, 4vw, 18px); color: #fff;
-      box-shadow: 0 6px 16px rgba(0,0,0,.35);
+    .controls{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+    button{
+      border:none; border-radius:14px; padding:14px 16px; font-size:clamp(16px, 4vw, 18px); color:#fff;
+      box-shadow:0 6px 16px rgba(0,0,0,.35);
       transition: transform .04s ease, filter .15s ease, box-shadow .25s ease;
+      background: #1b2430;
     }
-    button:active { transform: translateY(1px); }
-    #minus20 { background: linear-gradient(180deg, #5a1d1d, #2b0e0e); }
-    #minus20.active { box-shadow: 0 0 18px rgba(255, 50, 50, 0.4), 0 0 32px rgba(255, 50, 50, 0.2); filter: brightness(1.2); }
-    #startStop { background: linear-gradient(180deg, #1f2733, #111820); }
-    #startStop.active { box-shadow: 0 0 18px rgba(255,255,255,0.15), 0 0 32px rgba(255,255,255,0.08); filter: brightness(1.15); }
-    #plus20 { background: linear-gradient(180deg, #1e4130, #12261b); }
-    #plus20.active { box-shadow: 0 0 18px rgba(100,255,100,0.35), 0 0 32px rgba(100,255,100,0.15); filter: brightness(1.2); }
+    button:active{ transform: translateY(1px); }
+    #minus20{ background: linear-gradient(180deg, #5a1d1d, #2b0e0e); }
+    #minus20.active{ box-shadow: 0 0 18px rgba(255,50,50,.4), 0 0 32px rgba(255,50,50,.2); filter: brightness(1.2); }
+    #startStop{ background: linear-gradient(180deg, #1f2733, #111820); }
+    #startStop.active{ box-shadow: 0 0 18px rgba(255,255,255,.15), 0 0 32px rgba(255,255,255,.08); filter: brightness(1.15); }
+    #plus20{ background: linear-gradient(180deg, #1e4130, #12261b); }
+    #plus20.active{ box-shadow: 0 0 18px rgba(100,255,100,.35), 0 0 32px rgba(100,255,100,.15); filter: brightness(1.2); }
   </style>
 </head>
 <body>
-  <main class="shell">
+  <div class="bg" aria-hidden="true"></div>
+  <main class="shell" role="application" aria-label="Slimste Mens Timer">
     <div id="display" class="display">01:00</div>
     <div class="controls">
       <button id="minus20">-20 s</button>
@@ -76,7 +86,7 @@
     function add(n,el){rem=clamp(rem+n,0,99*60+59);if(!run)render();if(el)flash(el);}
     elStart.onclick=()=>run?stop():startFn();elP.onclick=()=>add(20,elP);elM.onclick=()=>add(-20,elM);
     window.onkeydown=e=>{if(e.repeat)return;if(e.key===' '){e.preventDefault();run?stop():startFn();}if(e.key==='+'||e.key==='='){add(20,elP);}if(e.key==='-'||e.key==='_'){add(-20,elM);}};
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(()=>{}); }); }
+    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js?v=3').catch(()=>{}); }); }
   </script>
 </body>
 </html>

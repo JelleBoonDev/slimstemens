@@ -1,8 +1,10 @@
-const CACHE = 'sm-timer-v1';
+const CACHE = 'sm-timer-v3';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './apple-touch-icon.png',
+  './background.jpg',
   './icon-192.png',
   './icon-512.png'
 ];
@@ -16,6 +18,6 @@ self.addEventListener('activate', (e) => {
 });
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((res) => res || fetch(e.request))
+    caches.match(e.request, {ignoreSearch:true}).then((res) => res || fetch(e.request))
   );
 });
