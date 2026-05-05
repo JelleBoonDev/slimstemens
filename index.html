@@ -140,11 +140,9 @@
       return Math.max(min,Math.min(max,n));
     }
 
-    function fmt(s){
-      s = Math.max(0, Math.round(s));
-      const m = Math.floor(s / 60).toString().padStart(2,'0');
-      const sec = (s % 60).toString().padStart(2,'0');
-      return `${m}:${sec}`;
+  function fmt(s){
+  return Math.max(0, Math.round(s)).toString().padStart(2,'0');
+}
     }
 
     const d = document;
