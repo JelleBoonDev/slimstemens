@@ -5,66 +5,129 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <title>Slimste Mens Timer</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="manifest" href="manifest.json?v=4" />
+  <link rel="manifest" href="manifest.json?v=5" />
   <meta name="theme-color" content="#0c0f12"/>
-  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=4"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=5"/>
+
   <style>
     :root{
-      --led:#ff2a2a; --text:#e7eef7;
+      --led:#ff2a2a;
+      --led-danger:#ff0000;
+      --text:#e7eef7;
     }
+
     *{ box-sizing:border-box }
+
     html,body{ height:100% }
+
     body{
-      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       color: var(--text);
-      display:grid; place-items:center; min-height:100vh;
+      display:grid;
+      place-items:center;
+      min-height:100vh;
       background:#0c0f12;
     }
-    /* Background layer with dark overlay */
+
     .bg{
-      position: fixed; inset: 0; z-index: 0;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       background:
         linear-gradient(rgba(0,0,0,.46), rgba(0,0,0,.46)),
         url('background.jpg') center center / cover no-repeat;
-      will-change: transform;
     }
+
     .shell{
-      position: relative; z-index: 1;
-      width: min(560px, 94vw); border-radius: 20px; padding: 18px;
+      position: relative;
+      z-index: 1;
+      width: min(560px, 94vw);
+      border-radius: 20px;
+      padding: 18px;
       background: rgba(15,20,26,.78);
       -webkit-backdrop-filter: blur(2px);
       backdrop-filter: blur(2px);
       box-shadow: 0 30px 80px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
       border: 1px solid rgba(255,255,255,.06);
     }
+
     .display{
       font-family: "Orbitron", monospace;
       font-size: clamp(56px, 16vw, 120px);
-      text-align: center; color: var(--led);
-      background: #050607; border-radius: 12px; padding: 18px 20px;
+      text-align: center;
+      color: var(--led);
+      background: #050607;
+      border-radius: 12px;
+      padding: 18px 20px;
       text-shadow: 0 0 8px rgba(255,42,42,.6), 0 0 22px rgba(255,42,42,.35);
       box-shadow: inset 0 0 20px rgba(255,42,42,.08), 0 10px 30px rgba(0,0,0,.4);
+      transition: color .2s ease, text-shadow .2s ease, box-shadow .2s ease;
     }
-    .controls{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 14px; }
+
+    .display.warning{
+      color: var(--led-danger);
+      text-shadow: 0 0 12px rgba(255,0,0,.85), 0 0 32px rgba(255,0,0,.55);
+      box-shadow: inset 0 0 28px rgba(255,0,0,.14), 0 10px 30px rgba(0,0,0,.4);
+    }
+
+    .controls{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+    }
+
     button{
-      border:none; border-radius:14px; padding:14px 16px; font-size:clamp(16px, 4vw, 18px); color:#fff;
+      border:none;
+      border-radius:14px;
+      padding:14px 16px;
+      font-size:clamp(16px, 4vw, 18px);
+      color:#fff;
       box-shadow:0 6px 16px rgba(0,0,0,.35);
       transition: transform .04s ease, filter .15s ease, box-shadow .25s ease;
       background: #1b2430;
     }
-    button:active{ transform: translateY(1px); }
-    #minus20{ background: linear-gradient(180deg, #5a1d1d, #2b0e0e); }
-    #minus20.active{ box-shadow: 0 0 18px rgba(255,50,50,.4), 0 0 32px rgba(255,50,50,.2); filter: brightness(1.2); }
-    #startStop{ background: linear-gradient(180deg, #1f2733, #111820); }
-    #startStop.active{ box-shadow: 0 0 18px rgba(255,255,255,.15), 0 0 32px rgba(255,255,255,.08); filter: brightness(1.15); }
-    #plus20{ background: linear-gradient(180deg, #1e4130, #12261b); }
-    #plus20.active{ box-shadow: 0 0 18px rgba(100,255,100,.35), 0 0 32px rgba(100,255,100,.15); filter: brightness(1.2); }
+
+    button:active{
+      transform: translateY(1px);
+    }
+
+    #minus20{
+      background: linear-gradient(180deg, #5a1d1d, #2b0e0e);
+    }
+
+    #minus20.active{
+      box-shadow: 0 0 18px rgba(255,50,50,.4), 0 0 32px rgba(255,50,50,.2);
+      filter: brightness(1.2);
+    }
+
+    #startStop{
+      background: linear-gradient(180deg, #1f2733, #111820);
+    }
+
+    #startStop.active{
+      box-shadow: 0 0 18px rgba(255,255,255,.15), 0 0 32px rgba(255,255,255,.08);
+      filter: brightness(1.15);
+    }
+
+    #plus20{
+      background: linear-gradient(180deg, #1e4130, #12261b);
+    }
+
+    #plus20.active{
+      box-shadow: 0 0 18px rgba(100,255,100,.35), 0 0 32px rgba(100,255,100,.15);
+      filter: brightness(1.2);
+    }
   </style>
 </head>
+
 <body>
   <div class="bg" aria-hidden="true"></div>
+
   <main class="shell" role="application" aria-label="Slimste Mens Timer">
     <div id="display" class="display">01:00</div>
+
     <div class="controls">
       <button id="minus20">-20 s</button>
       <button id="startStop">Start</button>
@@ -73,20 +136,189 @@
   </main>
 
   <script>
-    function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
-    function fmt(s){s=Math.max(0,Math.round(s));const m=Math.floor(s/60).toString().padStart(2,'0');const sec=(s%60).toString().padStart(2,'0');return `${m}:${sec}`;}
-    const d=document;const elD=d.getElementById('display');const elStart=d.getElementById('startStop');const elP=d.getElementById('plus20');const elM=d.getElementById('minus20');
-    let start=60,rem=start,run=false,raf,last=0;let audioCtx;
-    function beep(){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain(),now=audioCtx.currentTime;o.type='square';o.frequency.value=880;g.gain.setValueAtTime(0.001,now);g.gain.exponentialRampToValueAtTime(0.2,now+.02);g.gain.exponentialRampToValueAtTime(0.001,now+.18);o.connect(g).connect(audioCtx.destination);o.start(now);o.stop(now+.18);if(navigator.vibrate)navigator.vibrate(120);}catch(e){}}
-    function render(){elD.textContent=fmt(rem);elStart.textContent=run?'Stop':'Start';elStart.classList.toggle('active',run);}
-    function tick(ts){if(!run)return;if(!last)last=ts;const dlt=(ts-last)/1000;last=ts;rem=Math.max(0,rem-dlt);if(rem===0){stop();render();beep();return;}render();raf=requestAnimationFrame(tick);}
-    function startFn(){if(run)return;if(rem<=0)rem=start;run=true;last=0;render();raf=requestAnimationFrame(tick);}
-    function stop(){run=false;last=0;if(raf)cancelAnimationFrame(raf);raf=null;render();}
-    function flash(el){el.classList.add('active');setTimeout(()=>el.classList.remove('active'),200);}
-    function add(n,el){rem=clamp(rem+n,0,99*60+59);if(!run)render();if(el)flash(el);}
-    elStart.onclick=()=>run?stop():startFn();elP.onclick=()=>add(20,elP);elM.onclick=()=>add(-20,elM);
-    window.onkeydown=e=>{if(e.repeat)return;if(e.key===' '){e.preventDefault();run?stop():startFn();}if(e.key==='+'||e.key==='='){add(20,elP);}if(e.key==='-'||e.key==='_'){add(-20,elM);}};
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js?v=3').catch(()=>{}); }); }
+    function clamp(n,min,max){
+      return Math.max(min,Math.min(max,n));
+    }
+
+    function fmt(s){
+      s = Math.max(0, Math.round(s));
+      const m = Math.floor(s / 60).toString().padStart(2,'0');
+      const sec = (s % 60).toString().padStart(2,'0');
+      return `${m}:${sec}`;
+    }
+
+    const d = document;
+    const elD = d.getElementById('display');
+    const elStart = d.getElementById('startStop');
+    const elP = d.getElementById('plus20');
+    const elM = d.getElementById('minus20');
+
+    let start = 60;
+    let rem = start;
+    let run = false;
+    let raf;
+    let last = 0;
+    let audioCtx;
+    let lastSecondBeep = null;
+
+    function getAudio(){
+      if(!audioCtx){
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function tone(freq, duration, volume){
+      try{
+        const ctx = getAudio();
+        const now = ctx.currentTime;
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+
+        o.type = 'square';
+        o.frequency.value = freq;
+
+        g.gain.setValueAtTime(0.001, now);
+        g.gain.exponentialRampToValueAtTime(volume, now + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        o.connect(g).connect(ctx.destination);
+        o.start(now);
+        o.stop(now + duration);
+      }catch(e){}
+    }
+
+    function clickSound(){
+      tone(520, 0.055, 0.06);
+    }
+
+    function countdownSound(){
+      tone(760, 0.06, 0.05);
+    }
+
+    function finalBeep(){
+      tone(180, 0.45, 0.22);
+      setTimeout(() => tone(140, 0.45, 0.20), 180);
+
+      if(navigator.vibrate){
+        navigator.vibrate([180, 80, 180]);
+      }
+    }
+
+    function render(){
+      elD.textContent = fmt(rem);
+
+      const warning = run && rem <= 10 && rem > 0;
+      elD.classList.toggle('warning', warning);
+
+      elStart.textContent = run ? 'Stop' : 'Start';
+      elStart.classList.toggle('active', run);
+    }
+
+    function tick(ts){
+      if(!run) return;
+
+      if(!last) last = ts;
+
+      const dlt = (ts - last) / 1000;
+      last = ts;
+      rem = Math.max(0, rem - dlt);
+
+      const rounded = Math.ceil(rem);
+
+      if(rem > 0 && rem <= 10 && rounded !== lastSecondBeep){
+        lastSecondBeep = rounded;
+        countdownSound();
+      }
+
+      if(rem === 0){
+        stop();
+        render();
+        finalBeep();
+        return;
+      }
+
+      render();
+      raf = requestAnimationFrame(tick);
+    }
+
+    function startFn(){
+      if(run) return;
+
+      if(rem <= 0){
+        rem = start;
+      }
+
+      run = true;
+      last = 0;
+      lastSecondBeep = null;
+      render();
+      raf = requestAnimationFrame(tick);
+    }
+
+    function stop(){
+      run = false;
+      last = 0;
+
+      if(raf){
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+
+      render();
+    }
+
+    function flash(el){
+      el.classList.add('active');
+      setTimeout(() => el.classList.remove('active'), 200);
+    }
+
+    function add(n, el){
+      rem = clamp(rem + n, 0, 99 * 60 + 59);
+      clickSound();
+
+      if(!run){
+        render();
+      }
+
+      if(el){
+        flash(el);
+      }
+    }
+
+    elStart.onclick = () => {
+      clickSound();
+      run ? stop() : startFn();
+    };
+
+    elP.onclick = () => add(20, elP);
+    elM.onclick = () => add(-20, elM);
+
+    window.onkeydown = e => {
+      if(e.repeat) return;
+
+      if(e.key === ' '){
+        e.preventDefault();
+        clickSound();
+        run ? stop() : startFn();
+      }
+
+      if(e.key === '+' || e.key === '='){
+        add(20, elP);
+      }
+
+      if(e.key === '-' || e.key === '_'){
+        add(-20, elM);
+      }
+    };
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js?v=5').catch(()=>{});
+      });
+    }
+
+    render();
   </script>
 </body>
 </html>
