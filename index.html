@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <title>Slimste Mens Timer</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="manifest" href="manifest.json?v=5" />
+  <link rel="manifest" href="manifest.json?v=7" />
   <meta name="theme-color" content="#0c0f12"/>
-  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=5"/>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png?v=7"/>
 
   <style>
     :root{
@@ -17,7 +17,6 @@
     }
 
     *{ box-sizing:border-box }
-
     html,body{ height:100% }
 
     body{
@@ -126,7 +125,7 @@
   <div class="bg" aria-hidden="true"></div>
 
   <main class="shell" role="application" aria-label="Slimste Mens Timer">
-    <div id="display" class="display">01:00</div>
+    <div id="display" class="display">60</div>
 
     <div class="controls">
       <button id="minus20">-20 s</button>
@@ -140,9 +139,8 @@
       return Math.max(min,Math.min(max,n));
     }
 
-  function fmt(s){
-  return Math.max(0, Math.round(s)).toString().padStart(2,'0');
-}
+    function fmt(s){
+      return Math.max(0, Math.round(s)).toString().padStart(2,'0');
     }
 
     const d = document;
@@ -312,7 +310,7 @@
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=6').catch(()=>{});
+        navigator.serviceWorker.register('./sw.js?v=7').catch(()=>{});
       });
     }
 
