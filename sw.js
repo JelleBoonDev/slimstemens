@@ -1,4 +1,4 @@
-const CACHE = 'sm-timer-v3';
+const CACHE = 'sm-timer-v5';
 const ASSETS = [
   './',
   './index.html',
